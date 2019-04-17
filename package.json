@@ -1,0 +1,16 @@
+{
+	"name": "statemachiner",
+	"version": "1.0.0",
+	"description": "TypeScript/JS library for creating AWS Step Functions JSON (Amazon States Language)",
+	"main": "dist/index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fourTheorem/statemachiner"
+	},
+	"types": "dist/index.d.ts",
+	"scripts": {
+	},
+	"keywords": ["aws", "step functions", "amazon states language"],
+	"author": "Eoin Shanaghy <eoin.shanaghy@fourtheorem.com>",
+	"license": "MIT"
+}
