@@ -1,2 +1,4 @@
 tsconfig.json
-src
+src/
+gen/
+launch.json

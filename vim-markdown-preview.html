@@ -1,0 +1,47 @@
+<h1>asl-types</h1>
+
+<p><em>asl-types</em> is a TypeScript types module that makes it easier to create AWS Step Functions JSON (<a href="https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html">Amazon States Language</a>).</p>
+
+<p><img src="./screen.png" alt="Screenshot" title="" /></p>
+
+<h2>Usage</h2>
+
+<p><code>sh
+npm install asl-types --save
+</code></p>
+
+<p>```ts
+import * as asl from 'asl-types'</p>
+
+<p>const sm: asl.StateMachine = {
+   ...
+}</p>
+
+<p>...</p>
+
+<p>const stepFunctionJson = JSON.stringify(sm)
+```</p>
+
+<h2>About</h2>
+
+<p>This module does very little! It generates TypeScript definitions using the following great projects.</p>
+
+<ul>
+<li><a href="https://github.com/airware/asl-validator">asl-validator</a> - this module provides a JSON Schema for ASL (Amazon States Language)</li>
+<li><a href="https://github.com/bcherny/json-schema-to-typescript">json-schema-to-typescript</a></li>
+</ul>
+
+<p><code>asl-types</code> makes some minor modifications to the JSON Schema to get the best results currently possible. See <a href="src/convert.ts">convert.ts</a> for details.</p>
+
+<h2>Limitations</h2>
+
+<ul>
+<li>This is a set of interfaces right now. It might be useful to create a set of classes from these types.</li>
+<li>Validation of cardinality rules, particularly for <code>Choice</code> states, are not as strict as we would like. This relates to an issue in <code>json-schema-to-typescript</code> (<a href="https://github.com/bcherny/json-schema-to-typescript/issues/96">#96</a>). Contributions to address this issue are really welcome. This could be a resolution to that issue or an alternative solution in <code>asl-types</code>.  See the issue description for details and possible workarounds.</li>
+</ul>
+
+<h2>LICENCE</h2>
+
+<p><a href="./LICENCE">MIT</a></p>
+
+<p>Copyright (c) 2019 fourTheorem Ltd.</p>
