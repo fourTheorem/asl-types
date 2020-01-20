@@ -1,6 +1,6 @@
 {
 	"name": "asl-types",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "TypeScript types for AWS Step Functions JSON (Amazon States Language)",
 	"main": "dist/index.js",
 	"repository": {
