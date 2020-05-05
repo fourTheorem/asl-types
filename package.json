@@ -21,6 +21,7 @@
 	"author": "Eoin Shanaghy <eoin.shanaghy@fourtheorem.com>",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/tap": "^14.10.0",
 		"tap": "^12.6.2"
 	},
 	"dependencies": {

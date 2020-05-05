@@ -14,6 +14,8 @@ declare type Declarations = { [schemaName: string] : string };
 
 const DEFAULT_BANNER_COMMENT = '/* tslint:disable */\n/**\n* This file was automatically generated */\n';
 
+const redundantExport = /^export type (\w+) = \1;\n+/gm;
+
 /**
  * Read all JSON schemas from the `asl-validator` module and generate TypeScript definitions for them
  */
@@ -45,7 +47,8 @@ async function convert () {
       declareExternallyReferenced: true,
       bannerComment: `${DEFAULT_BANNER_COMMENT}\n${importLines.join('\n')}\n\n`
     });
-    await fs.writeFile(schemaTypeFile, ts);
+    
+    await fs.writeFile(schemaTypeFile, ts.replace(redundantExport, ''));
   }
 
   createTypeIndex(declarations);
@@ -119,13 +122,18 @@ function createImportLines(declarations: Declarations, modules: string[]) : stri
   }
 
 async function createTypeIndex (declarations: Declarations) {
-  const importLines = createImportLines(declarations, Object.keys(declarations));
-  const exports = Object.values(declarations).reduce((prev: string, typeName: string) => 
-    `${prev}export type ${typeName} = ${typeName};\n`
-  , '');
+  const code = Object.keys(declarations).reduce(
+    (prev: string, importSchemaName: string) =>
+      `${prev}export type { ${declarations[importSchemaName]} } from './${importSchemaName}';\n`,
+    ''
+  );
+
   const typeIndexFile = `dist/index.d.ts`;
   console.log(`Creating ${typeIndexFile}`);
-  await fs.writeFile(typeIndexFile, `${importLines.join('\n')}\n${exports}`);
+  await fs.writeFile(typeIndexFile, code, { encoding: 'utf8' });
 }
 
-convert()
+convert().catch(err => {
+  console.error(err.stack);
+  process.exit(-1);
+});

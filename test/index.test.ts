@@ -1,11 +1,10 @@
-import tap, { Test } from 'tap';
-
+import tap from 'tap';
 import { StateMachine } from '../dist/state-machine'
-import { Task } from '../dist/state'
+import { Task } from '../dist/task'
 
 const testLambdaArn = "arn:aws:lambda:eu-west-1:123456789123:function:function-name";
 
-tap.test('it creates a state machine', (t: Test) => {
+tap.test('it creates a state machine', t => {
   const startState : Task = {
     Type: "Task",
     Resource: testLambdaArn    
