@@ -43,7 +43,6 @@ async function convert () {
     const file = files.shift();
     if (file && file.endsWith('.json')) {
       const schemaName = file.replace('.json', '');
-      console.log("IS IT FUCKED?", schemaName)
       const genSchemaFile = await createSchemaFile(schemaName, declarations)
       schemaFiles[schemaName] = genSchemaFile;
     }
@@ -53,11 +52,8 @@ async function convert () {
     const schemaTypeFile = `dist/${schemaName}.d.ts`;
     console.log(`Creating ${schemaTypeFile}`);
 
-    console.log("DECS", declarations)
-
     // Create 'import' statements for all other types
     const importLines = createImportLines(declarations, Object.keys(declarations).filter(key => key !== schemaName));
-    console.log("IMPORT!", importLines)
     const ts = await compileFromFile(path.join(genSchemaDir, `${schemaName}.json`), {
       cwd: genSchemaDir,
       declareExternallyReferenced: true,
@@ -130,7 +126,6 @@ async function createSchemaFile(schemaName: string, declarations: Declarations) 
 
 function createImportLines(declarations: Declarations, modules: string[]) : string[] {
   return modules.reduce((prev: string[], importSchemaName: string) => {
-    console.log("IMPORT!", importSchemaName)
       return [
         ...prev,
         `import { ${declarations[importSchemaName]} } from './${importSchemaName}';`
