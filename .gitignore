@@ -4,6 +4,5 @@
 node_modules
 .nyc_output/
 gen/
-dist/
 .DS_Store
 vim-markdown-preview.html
