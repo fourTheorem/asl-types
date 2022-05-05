@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import * as fs from 'fs'
 import path from 'path'
 import url from 'url'
 
@@ -7,8 +7,21 @@ const traverse = require('traverse')
 import { compileFromFile } from 'json-schema-to-typescript'
 import { JSONSchema4 } from 'json-schema';
 
+
+
+
 const schemaRoot = path.join(__dirname, '..', 'node_modules', 'asl-validator', 'src', 'schemas')
-const genSchemaDir = path.join(__dirname, '..', 'gen');
+const genSchemaDir = path.join(__dirname, '..', 'gen')
+const outDir = path.join(__dirname, '..', 'dist')
+
+if (!fs.existsSync(outDir)){
+  fs.mkdirSync(outDir, { recursive: true });
+}
+
+if (!fs.existsSync(genSchemaDir)) {
+  fs.mkdirSync(genSchemaDir, { recursive: true })
+}
+
 
 declare type Declarations = { [schemaName: string] : string };
 
@@ -24,9 +37,8 @@ async function convert () {
 
   const declarations: Declarations = {}
   const schemaFiles: {[schemaName : string] :string} = {}
-  await fs.mkdir(genSchemaDir).catch(() => {});
 
-  const files = await fs.readdir(schemaRoot);
+  const files = fs.readdirSync(schemaRoot);
   while(files.length) {
     const file = files.shift();
     if (file && file.endsWith('.json')) {
@@ -48,7 +60,7 @@ async function convert () {
       bannerComment: `${DEFAULT_BANNER_COMMENT}\n${importLines.join('\n')}\n\n`
     });
     
-    await fs.writeFile(schemaTypeFile, ts.replace(redundantExport, ''));
+    fs.writeFileSync(schemaTypeFile, ts.replace(redundantExport, ''));
   }
 
   createTypeIndex(declarations);
@@ -63,7 +75,7 @@ async function convert () {
  *  2. Replace `$ref`s to other ASL types with `tsType` references
  */
 async function transformSchema (file: string, declarations: { [key: string] : string }) : Promise<JSONSchema4> {
-  const json = await fs.readFile(file, 'utf-8');
+  const json = fs.readFileSync(file, 'utf-8');
   const obj : JSONSchema4 = JSON.parse(json);
   const newDefinitions : any = {}
   traverse(obj).forEach(function (this: any, node: any) {
@@ -85,7 +97,7 @@ async function transformSchema (file: string, declarations: { [key: string] : st
       if (node['$ref']) {
         const pathPart = url.parse(node['$ref']).path;
         if (pathPart) {
-          const schemaName = pathPart.substring(1);
+          const schemaName = pathPart.substring(0).replace(".json", "");
           // The only way found to get and use separate classes per schema
           // is by using tsType definitions
           // Idea from https://github.com/bcherny/json-schema-to-typescript/issues/211
@@ -108,7 +120,7 @@ async function createSchemaFile(schemaName: string, declarations: Declarations) 
   const genSchemaFile = path.join(genSchemaDir, `${schemaName}.json`);
   console.log(`Generating ${genSchemaFile}`);
   const schema = await transformSchema(path.join(schemaRoot, `${schemaName}.json`), declarations);
-  await fs.writeFile(genSchemaFile, JSON.stringify(schema, null, ' '));
+  fs.writeFileSync(genSchemaFile, JSON.stringify(schema, null, ' '));
   return genSchemaFile;
 }
 
@@ -130,7 +142,7 @@ async function createTypeIndex (declarations: Declarations) {
 
   const typeIndexFile = `dist/index.d.ts`;
   console.log(`Creating ${typeIndexFile}`);
-  await fs.writeFile(typeIndexFile, code, { encoding: 'utf8' });
+  fs.writeFileSync(typeIndexFile, code, { encoding: 'utf8' });
 }
 
 convert().catch(err => {
