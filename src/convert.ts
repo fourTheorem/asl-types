@@ -85,7 +85,7 @@ async function transformSchema (file: string, declarations: { [key: string] : st
       if (node['$ref']) {
         const pathPart = url.parse(node['$ref']).path;
         if (pathPart) {
-          const schemaName = pathPart.substring(1);
+          const schemaName = pathPart.substring(0).replace(".json", "");
           // The only way found to get and use separate classes per schema
           // is by using tsType definitions
           // Idea from https://github.com/bcherny/json-schema-to-typescript/issues/211
