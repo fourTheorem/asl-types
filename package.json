@@ -25,6 +25,7 @@
 		"tap": "^12.6.2"
 	},
 	"dependencies": {
+		"asl-types": "^1.2.1",
 		"asl-validator": "1.7.1",
 		"change-case": "^3.1.0",
 		"json-schema-to-typescript": "^6.1.3",
